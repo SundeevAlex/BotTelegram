@@ -1,20 +1,28 @@
 import requests, json, datetime, os
 
 CURRENCY_RATES_FILE = "currency_rates.json"
-
+BOT_TOKEN = os.getenv("TELEGRAM_KEY")
+CHAT_ID = '6810180613'
+API_KEY = os.getenv("APILAYER_KEY")
 
 def main():
     while True:
+        # print(BOT_TOKEN)
+        # print(API_KEY)
         currency = input("Введите название валюты (USD или EUR): ").upper()
         # currency = 'USD'
         if currency not in ["USD", "EUR"]:
             print("Некорректный ввод")
-            continue
+            break
+            # continue
         rate = get_currency_rate(currency)
         # print(rate)
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         # print(timestamp)
-        print(f"Курс {currency} к рублю: {rate:.2f}")
+        result = f"Курс {currency} к рублю: {rate:.2f}"
+        print(result)
+        send_telegram_message(result)
+
         data = {"currency": currency, "rate": rate, "timestamp": timestamp}
         save_to_json(data)
 
@@ -26,6 +34,16 @@ def main():
             break
         else:
             print("Некорректный ввод")
+
+
+def send_telegram_message(my_text):
+    url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
+    payload = {
+        'chat_id': CHAT_ID,
+        'text': my_text
+    }
+    responce = requests.post(url, json=payload)
+    return responce
 
 
 def get_currency_rate(currency: str) -> float:
