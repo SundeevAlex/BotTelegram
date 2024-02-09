@@ -5,7 +5,6 @@ import requests, json, datetime, os, telebot
 CURRENCY_RATES_FILE = "currency_rates_eur.json"
 BOT_TOKEN = os.getenv("TELEGRAM_KEY")
 CHAT_ID = '5462477537'  #Мой бот
-# CHAT_ID = '1270483208' # Оксана
 API_KEY = os.getenv("APILAYER_KEY")
 
 
