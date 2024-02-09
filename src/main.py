@@ -1,16 +1,18 @@
-import requests, json, datetime, os
+import requests, json, datetime, os, telebot
 
 CURRENCY_RATES_FILE = "currency_rates.json"
 BOT_TOKEN = os.getenv("TELEGRAM_KEY")
-CHAT_ID = '6810180613'
+CHAT_ID = '5462477537'  #Мой бот
+# CHAT_ID = '1270483208' # Оксана
 API_KEY = os.getenv("APILAYER_KEY")
+
 
 def main():
     while True:
         # print(BOT_TOKEN)
         # print(API_KEY)
-        currency = input("Введите название валюты (USD или EUR): ").upper()
-        # currency = 'USD'
+        # currency = input("Введите название валюты (USD или EUR): ").upper()
+        currency = 'EUR'
         if currency not in ["USD", "EUR"]:
             print("Некорректный ввод")
             break
@@ -21,13 +23,17 @@ def main():
         # print(timestamp)
         result = f"Курс {currency} к рублю: {rate:.2f}"
         print(result)
-        send_telegram_message(result)
+        date = {"currency": currency, "rate": rate, "timestamp": timestamp}
+        print(date)
+        if date != save_to_json(date):
+            print('ОТПРАВЛЯЕТ В ТЕЛЕГУ')
+            send_telegram_message(result)
 
         data = {"currency": currency, "rate": rate, "timestamp": timestamp}
         save_to_json(data)
 
-        choice = input("Выберите действие: (1 - продолжить, 2 - выйти) ")
-        # choice = '2'
+        # choice = input("Выберите действие: (1 - продолжить, 2 - выйти) ")
+        choice = '2'
         if choice == "1":
             continue
         elif choice == "2":
@@ -42,7 +48,9 @@ def send_telegram_message(my_text):
         'chat_id': CHAT_ID,
         'text': my_text
     }
+    # print('payload=', payload)
     responce = requests.post(url, json=payload)
+    # print('resp=', responce)
     return responce
 
 
